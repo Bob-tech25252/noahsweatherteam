@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noah's Weather Alert Team</title>
+  <style>
+    /* Global Styles & Dark Theme */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #0d0e12;
+      color: #e0e6ed;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* Navigation Bar */
+    header {
+      background-color: #161a23;
+      border-bottom: 2px solid #232936;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #00ff88;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .brand span { color: #ffffff; }
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 20px;
+    }
+    nav button {
+      background: none;
+      border: none;
+      color: #a0aec0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    nav button:hover, nav button.active {
+      color: #00ff88;
+      background-color: #1e2533;
+    }
+
+    /* Main Container & Page Layout */
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* Cards & Widgets */
+    .card {
+      background-color: #161a23;
+      border: 1px solid #232936;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .card-title {
+      font-size: 1.1rem;
+      color: #00ff88;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Page 1: Dashboard Grid */
+    .hero {
+      text-align: center;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #161a23 0%, #1e2533 100%);
+      border-radius: 12px;
+      margin-bottom: 25px;
+      border: 1px solid #2a3245;
+    }
+    .hero h1 { font-size: 2.2rem; margin-bottom: 10px; color: #ffffff; }
+    .hero p { color: #a0aec0; font-size: 1.1rem; }
+    .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+    /* Alert Bar */
+    .alert-ticker {
+      background-color: #2b1216;
+      border: 1px solid #ff4d4d;
+      color: #ff9999;
+      padding: 12px 18px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+    }
+    .alert-badge {
+      background-color: #ff4d4d;
+      color: #000;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    /* Page 2: Live Radar */
+    .radar-wrapper {
+      width: 100%;
+      height: 500px;
+      background-color: #08090c;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #232936;
+    }
+    .radar-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Page 3: YouTube & Stream */
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .video-container iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+    .btn-yt {
+      display: inline-block;
+      background-color: #ff0000;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    /* Page 4: Report Form */
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; color: #a0aec0; }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      background-color: #0d0e12;
+      border: 1px solid #232936;
+      border-radius: 6px;
+      color: #fff;
+    }
+    .btn-submit {
+      background-color: #00ff88;
+      color: #0d0e12;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 25px;
+      color: #718096;
+      border-top: 1px solid #232936;
+      margin-top: 40px;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .nav-container { flex-direction: column; gap: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header>
+    <div class="nav-container">
+      <div class="brand">⚡ Noah's <span>Weather Alert Team</span></div>
+      <nav>
+        <ul>
+          <li><button class="nav-btn active" onclick="showPage('home')">Dashboard</button></li>
+          <li><button class="nav-btn" onclick="showPage('radar')">Live Radar</button></li>
+          <li><button class="nav-btn" onclick="showPage('channel')">YouTube & Live Streams</button></li>
+          <li><button class="nav-btn" onclick="showPage('report')">Submit Report</button></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- PAGE 1: DASHBOARD / HOME -->
+    <section id="home" class="page active">
+      <div class="hero">
+        <h1>Severe Weather Coverage & Live Tracking</h1>
+        <p>Providing real-time updates, storm monitoring, and emergency forecasts.</p>
+      </div>
+
+      <div class="alert-ticker">
+        <span class="alert-badge">Active Alert</span>
+        <span>Monitoring active weather conditions across southern Manitoba. Stay tuned for live coverage updates!</span>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Latest Weather Outlook</div>
+          <p>Welcome to Noah's Weather Alert Team official portal! Here we track active thunderstorm setups, severe winter conditions, and emergency weather statements.</p>
+          <br>
+          <p>Check out our live radar tab for spatial tracking or head over to the YouTube channel page to watch our live storm coverage.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Quick Links</div>
+          <p>🔴 <strong>YouTube Channel:</strong> <a href="https://www.youtube.com/@NoahsWeatherAlertTeam" target="_blank" style="color: #00ff88;">@NoahsWeatherAlertTeam</a></p>
+          <br>
+          <p>📍 <strong>Primary Coverage:</strong> Manitoba & Midwest Regions</p>
+          <br>
+          <p>⚠️ <strong>Emergency Notice:</strong> Always follow local emergency management guidance during severe weather events.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 2: LIVE RADAR -->
+    <section id="radar" class="page">
+      <div class="card">
+        <div class="card-title">Interactive Live Radar Network</div>
+        <div class="radar-wrapper">
+          <!-- Embedded Windy Radar Map -->
+          <iframe src="https://embed.windy.com/embed2.html?lat=49.895&lon=-97.138&detailLat=49.895&detailLon=-97.138&width=650&height=450&zoom=7&level=surface&overlay=radar&product=radar&menu=&message=&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=default&radarRange=-1" frameborder="0"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 3: YOUTUBE & LIVE COVERAGE -->
+    <section id="channel" class="page">
+      <div class="card">
+        <div class="card-title">Official YouTube Broadcasts</div>
+        <p style="margin-bottom: 15px;">Watch live stream storm tracking and video forecasts directly from our channel.</p>
+        
+        <!-- Placeholder for Channel Embed / Live Stream -->
+        <div class="video-container">
+          <iframe src="https://www.youtube.com/embed?listType=user_uploads&list=NoahsWeatherAlertTeam" title="YouTube Video Player" allowfullscreen></iframe>
+        </div>
+
+        <a href="https://www.youtube.com/@NoahsWeatherAlertTeam" target="_blank" class="btn-yt">Subscribe on YouTube ➔</a>
+      </div>
+    </section>
+
+    <!-- PAGE 4: SUBMIT STORM REPORTS -->
+    <section id="report" class="page">
+      <div class="card">
+        <div class="card-title">Submit a Weather Report</div>
+        <p style="margin-bottom: 20px; color: #a0aec0;">Did you witness hail, high winds, flooding, or shelf clouds? Submit your observation to the team!</p>
+
+        <form onsubmit="alert('Thank you for your report!'); return false;">
+          <div class="form-group">
+            <label>Your Name / Call Sign</label>
+            <input type="text" placeholder="e.g. WeatherWatcher_MB" required>
+          </div>
+          <div class="form-group">
+            <label>Location (City / Region)</label>
+            <input type="text" placeholder="e.g. Steinbach, MB" required>
+          </div>
+          <div class="form-group">
+            <label>Observed Conditions</label>
+            <textarea rows="4" placeholder="Describe hail size, wind gusts, rainfall intensity, or damage..." required></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Submit Report</button>
+        </form>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    &copy; 2026 Noah's Weather Alert Team. Built for severe weather tracking and community safety.
+  </footer>
+
+  <script>
+    // Tabbed Page Navigation Function
+    function showPage(pageId) {
+      // Hide all pages
+      const pages = document.querySelectorAll('.page');
+      pages.forEach(page => page.classList.remove('active'));
+
+      // Remove active class from buttons
+      const buttons = document.querySelectorAll('.nav-btn');
+      buttons.forEach(btn => btn.classList.remove('active'));
+
+      // Show selected page
+      document.getElementById(pageId).classList.add('active');
+
+      // Highlight active button
+      event.currentTarget.classList.add('active');
+    }
+  </script>
+
+</body>
+</html>
